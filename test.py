@@ -21,12 +21,13 @@ class Assignment:
 	def percentage(self):
 		if self._is_null:
 			return None
-		return 100 * self.earned / self.possible
+		return round(100 * self.earned / self.possible)
 
 	def __str__(self):
 		earned = "--" if self._is_null else self.earned
 		percentage = "--" if self._is_null else self.percentage 
-		return "{} in {}, {}/{} ({}%)".format(self.name, self.category, earned, self.possible, percentage)
+		return "({}) {}, {}/{} ({}%)".format(self.category, self.name, earned, self.possible, percentage)
+
 
 class Group:
 
@@ -37,8 +38,7 @@ class Group:
 
 	@property
 	def _non_null(self):
-		return list(filter(lambda assignment: not assignment._is_null, self.assignments)) # excludes "--" scores
-			# TODO remove
+		return filter(lambda assignment: not assignment._is_null, self.assignments) # excludes "--" scores
 
 	@property
 	def _total_earned(self):
@@ -53,7 +53,7 @@ class Group:
 		return round(100 * self._total_earned / self._total_possible)
 
 	def __str__(self):
-		header = "{} with {}, GRADE {}%".format(self.class_name, self.teacher_name, self.score) #TODO class name
+		header = "{} with {}, GRADE {}%".format(self.class_name, self.teacher_name, self.score)
 		grades = [ "{}. {}".format(i+1, assignment) for i, assignment in enumerate(self.assignments) ]
 		separator = "/" * max(map(len, grades))
 		grades = "\n".join(grades)
