@@ -1,13 +1,16 @@
-from __future__ import division
+"""
+
+"""
 from bs4 import *
 
 class Assignment:
 
-	def __init__(self, name, category, earned, possible):
+	def __init__(self, name, category, earned, possible, real):
 		self.name = name
 		self.category = category
 		self.earned = self._parse_int(earned)
 		self.possible = self._parse_int(possible)
+		self.real = real
 
 	@staticmethod
 	def _parse_int(string):
@@ -36,9 +39,33 @@ class Group:
 		self.class_name = class_name
 		self.teacher_name = " ".join(reversed(teacher_name.split(", ")))
 
+	@staticmethod
+	def import_from_html(page):
+		soup = BeautifulSoup(page)
+		tables = soup.find(id="content-main").find_all("table")
+		info_cells = [ cell.string for cell in tables[0].find_all("tr")[-1].find_all("td") ]
+		class_name, teacher_name = info_cells[0], info_cells[1]
+		grades = tables[-1].find_all("tr")[1:] # all rows
+		grades = [	[ cell.string for cell in row.find_all("td") if cell.string ] for row in grades	] # all cells except the empty ones
+
+		def make_assignment(row):
+			points = row[3].split("/")
+			return Assignment(name=row[2], category=row[1], earned=points[0], possible=points[1], real=True)
+
+		grades = [ make_assignment(grade) for grade in grades]
+		return Group(grades, class_name, teacher_name)
+
+	@property
+	def categories(self):
+		return set(assignment.category for assignment in assignments)
+	
 	@property
 	def _non_null(self):
 		return filter(lambda assignment: not assignment._is_null, self.assignments) # excludes "--" scores
+
+	@property
+	def _real(self):
+		return filter(lambda assignment: assignment.real, self.assignments)
 
 	@property
 	def _total_earned(self):
@@ -52,6 +79,9 @@ class Group:
 	def score(self):
 		return round(100 * self._total_earned / self._total_possible)
 
+	def add_assignment(self, assignment):
+		self.assignments += assignment
+
 	def __str__(self):
 		header = "{} with {}, GRADE {}%".format(self.class_name, self.teacher_name, self.score)
 		grades = [ "{}. {}".format(i+1, assignment) for i, assignment in enumerate(self.assignments) ]
@@ -61,21 +91,5 @@ class Group:
 
 
 with open("test.html") as page:
-	soup = BeautifulSoup(page)
+	group = Group.import_from_html(page)
 
-tables = soup.find(id="content-main").find_all("table")
-
-info_cells = [ cell.string for cell in tables[0].find_all("tr")[-1].find_all("td") ]
-class_name, teacher_name = info_cells[0], info_cells[1]
-
-grades = tables[-1].find_all("tr")[1:] # all rows
-grades = [	[ cell.string for cell in row.find_all("td") if cell.string ] for row in grades	] # all cells except the empty ones
-
-def make_assignment(row):
-	points = row[3].split("/")
-	return Assignment(name=row[2], category=row[1], earned=points[0], possible=points[1])
-
-grades = [ make_assignment(grade) for grade in grades]
-group = Group(grades, class_name, teacher_name)
-
-print(group)

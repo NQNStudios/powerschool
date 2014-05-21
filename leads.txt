@@ -1,2 +1,7 @@
 code.google.com/p/cefpython
 firebreath.org/display/documentation/FireBreath+Home
+http://www.gnu.org/software/pythonwebkit/
+http://stackoverflow.com/questions/647041/need-a-simple-hello-world-example-using-the-webkit-library-in-python
+https://code.google.com/p/pywebkitgtk/
+https://code.google.com/p/pyplugin/
+http://www.firebreath.org/display/documentation/Creating+a+New+Plugin+Project
