@@ -1,8 +1,10 @@
 #! /usr/bin/env python3
-"""
-
-"""
 from bs4 import *
+import sys
+if len(sys.argv) is 1:
+	filepath = "class.html" #if no .html file provided as an argument, parse class.html
+else:
+	filepath = sys.argv[1]
 
 class Assignment:
 
@@ -22,8 +24,12 @@ class Assignment:
 		return self.earned is None
 
 	@property
+	def _is_extra_credit(self):
+		return self.possible is 0
+
+	@property
 	def percentage(self):
-		if self._is_null:
+		if self._is_null or self._is_extra_credit:
 			return None
 		return round(100 * self.earned / self.possible)
 
@@ -51,6 +57,8 @@ class Group:
 
 		def make_assignment(row):
 			points = row[3].split("/")
+			if len(points) is 1:
+				points.append("0") #extra credit assignment
 			return Assignment(name=row[2], category=row[1], earned=points[0], possible=points[1], real=True)
 
 		grades = [ make_assignment(grade) for grade in grades]
@@ -91,7 +99,7 @@ class Group:
 		return "\n".join( (header, separator, grades) )
 
 
-with open("class.html") as page:
+with open(filepath) as page:
 	group = Group.import_from_html(page)
 	print(group)
 
