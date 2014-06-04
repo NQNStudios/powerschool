@@ -91,6 +91,7 @@ class Group:
 		return "\n".join( (header, separator, grades) )
 
 
-with open("test.html") as page:
+with open("class.html") as page:
 	group = Group.import_from_html(page)
+	print(group)
 
