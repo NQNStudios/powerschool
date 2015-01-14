@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import extract
+import sys
 from parse import Group
 
 if __name__ == '__main__':
@@ -9,4 +10,4 @@ if __name__ == '__main__':
     for score_details in class_score_details:
         group = Group.import_from_html(score_details)
 
-        print(group)
+        print(group, file=sys.stderr)

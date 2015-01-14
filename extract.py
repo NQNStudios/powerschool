@@ -95,8 +95,6 @@ def important_class_details(term_num):
 
         for term_grade in find_term_grades(home_html, term_num):
             if not (is_grade_A(term_grade) or is_grade_null(term_grade)):
-                print('appending another score detail page')
-                print(term_grade.text)
                 important_details.append(class_details_html(browser, term_grade))
 
     return important_details
