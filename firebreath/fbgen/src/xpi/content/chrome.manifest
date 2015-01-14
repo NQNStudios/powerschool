@@ -1,1 +1,0 @@
-binary-component  plugins/np@{PLUGIN_ident} abi=WINNT_x86-MSVC

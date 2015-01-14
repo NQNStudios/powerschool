@@ -99,7 +99,7 @@ class Group:
 		return "\n".join( (header, separator, grades) )
 
 
-with open(filepath) as page:
-	group = Group.import_from_html(page)
-	print(group)
-
+if __name__ == '__main__':
+    with open(filepath) as page:
+        group = Group.import_from_html(page)
+        print(group)
